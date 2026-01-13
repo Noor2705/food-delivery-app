@@ -1,0 +1,11 @@
+# Backend
+backend/node_modules/
+backend/.env
+
+# Flutter
+frontend/build/
+frontend/.dart_tool/
+frontend/.idea/
+
+# OS files
+.DS_Store
