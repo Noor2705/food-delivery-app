@@ -1,22 +1,32 @@
 const express = require("express");
-const {
-  getRestaurants,
-  addRestaurant,
-  addMenuItem,
-  getMenuByRestaurant,
-} = require("../controllers/restaurantController");
-
-const authMiddleware = require("../middleware/authMiddleware");
-const roleMiddleware = require("../middleware/roleMiddleware");
-
 const router = express.Router();
+const Restaurant = require("../models/Restaurant");
+const Menu = require("../models/Menu");
 
-// PUBLIC
-router.get("/", getRestaurants);
-router.get("/:restaurantId/menu", getMenuByRestaurant);
+// GET ALL RESTAURANTS
+router.get("/", async (req, res) => {
+  const restaurants = await Restaurant.find();
+  res.json({ success: true, restaurants });
+});
 
-// ADMIN
-router.post("/", authMiddleware, roleMiddleware("admin"), addRestaurant);
-router.post("/menu", authMiddleware, roleMiddleware("admin"), addMenuItem);
+// GET MENUS BY RESTAURANT
+router.get("/:id/menus", async (req, res) => {
+  const menus = await Menu.find({ restaurantId: req.params.id });
+  res.json({ success: true, menus });
+});
+
+// GET ALL MENU ITEMS (FOR CUSTOMER BROWSE)
+router.get("/menus/all", async (req, res) => {
+  try {
+    const menus = await Menu.find().populate("restaurantId", "name");
+
+    res.status(200).json({
+      success: true,
+      menus,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

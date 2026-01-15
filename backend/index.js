@@ -4,8 +4,11 @@ const cors = require("cors");
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
-const orderRoutes = require("./routes/orderRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const adminMenuRoutes = require("./routes/adminMenuRoutes");
+const adminOrderRoutes = require("./routes/adminOrderRoutes");
 
 const app = express();
 
@@ -29,8 +32,6 @@ mongoose
 /* =======================
    ROUTES
 ======================= */
-
-// Health check
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -39,14 +40,17 @@ app.get("/", (req, res) => {
   });
 });
 
-// Auth routes
+// Public / customer routes
 app.use("/auth", authRoutes);
-
-// Order routes
-app.use("/orders", orderRoutes);
-
-// Restaurant routes
 app.use("/restaurants", restaurantRoutes);
+
+// Customer protected
+app.use("/orders", orderRoutes);
+app.use("/payments", paymentRoutes);
+
+// Admin routes (ONLY THESE)
+app.use("/admin", adminMenuRoutes);
+app.use("/admin", adminOrderRoutes);
 
 /* =======================
    SERVER
